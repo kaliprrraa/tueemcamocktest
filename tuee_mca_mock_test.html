@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TUEE MCA 2025 CBT Exam</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f5f9;
+    }
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #1e293b;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .question-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .question-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background-color: #64748b;
+      color: white;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .question-btn.active {
+      background-color: #22c55e;
+    }
+    .main {
+      flex-grow: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    .question-container {
+      margin-bottom: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .question-container h3 {
+      margin-bottom: 10px;
+    }
+    .options label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+    .submit-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .submit-btn:hover {
+      background-color: #1e40af;
+    }
+    .nav-btns {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .result {
+      margin-top: 20px;
+      background-color: #e0f2fe;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .timer {
+      position: fixed;
+      top: 20px;
+      right: 40px;
+      background: #fff;
+      color: #1e293b;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React and ReactDOM must be loaded BEFORE your Babel script -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const questions = [
+  // Mathematics (15 Questions)
+  {
+    question: "What is the derivative of x³ + 3x² + 5?",
+    options: ["3x² + 6x", "x² + 6x", "x² + 3x", "3x + 6"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "Solve: ∫ cos(x) dx",
+    options: ["sin(x) + C", "-sin(x) + C", "cos(x) + C", "-cos(x) + C"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the distance between the points (2, 3) and (6, 7)?",
+    options: ["4", "6", "√32", "√16"],
+    answer: "C",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the angle in degrees between the hands of a clock at 3:00?",
+    options: ["90°", "180°", "75°", "60°"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the value of lim(x→0) (sin x)/x?",
+    options: ["1", "2", "0", "3"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "The roots of the equation x² + 4x + 4 = 0 are:",
+    options: ["2, 2", "-2, -2", "2, -2", "0, 4"],
+    answer: "B",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the inverse of the function f(x) = 3x + 1?",
+    options: ["f⁻¹(x) = (x - 1)/3", "f⁻¹(x) = 3x - 1", "f⁻¹(x) = x/3 + 1", "f⁻¹(x) = x + 3"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the median of the set {2, 5, 7, 10, 12}?",
+    options: ["7", "10", "5", "12"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the next number in the sequence: 1, 1, 2, 3, 5, ?",
+    options: ["7", "8", "9", "6"],
+    answer: "B",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the sum of all angles in a hexagon?",
+    options: ["720°", "540°", "900°", "360°"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "Evaluate: 2⁴",
+    options: ["10", "16", "8", "12"],
+    answer: "B",
+    section: "Mathematics"
+  },
+  {
+    question: "What is the standard deviation of the data set {2, 2, 2, 2}?",
+    options: ["0", "2", "1", "4"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "Which of the following represents a linear equation?",
+    options: ["y = 2x + 3", "y = x² + 1", "y = √x", "y = 1/x"],
+    answer: "A",
+    section: "Mathematics"
+  },
+  {
+    question: "If matrix A = [[1, 2], [3, 4]], what is the trace of A?",
+    options: ["4", "5", "6", "7"],
+    answer: "B",
+    section: "Mathematics"
+  },
+  {
+    question: "If f(x) = x³, what is f''(x)?",
+    options: ["3x²", "6x", "x", "3"],
+    answer: "B",
+    section: "Mathematics"
+  },
+
+  // Computer Science (15 Questions)
+  {
+    question: "What is the full form of ALU?",
+    options: ["Arithmetic Logic Unit", "Advanced Logic Unit", "Algorithmic Logical Unit", "Arithmetic Linear Unit"],
+    answer: "A",
+    section: "Computer Science"
+  },
+  {
+    question: "What is the default port number for HTTP?",
+    options: ["21", "80", "443", "25"],
+    answer: "B",
+    section: "Computer Science"
+  },
+  {
+    question: "What is the extension of a Python file?",
+    options: [".pt", ".py", ".pyt", ".exe"],
+    answer: "B",
+    section: "Computer Science"
+  },
+  {
+    question: "Which of these is a loop structure in C?",
+    options: ["select", "choose", "for", "define"],
+    answer: "C",
+    section: "Computer Science"
+  },
+  {
+    question: "What is the base of hexadecimal number system?",
+    options: ["8", "10", "16", "2"],
+    answer: "C",
+    section: "Computer Science"
+  },
+  {
+    question: "What is the output of print(len(\"Hello\")) in Python?",
+    options: ["4", "5", "6", "Error"],
+    answer: "B",
+    section: "Computer Science"
+  },
+  {
+    question: "What is the result of 5 // 2 in Python?",
+    options: ["2.5", "3", "2", "1"],
+    answer: "C",
+    section: "Computer Science"
+  },
+  {
+    question: "Which of the following is not a search algorithm?",
+    options: ["Binary search", "Linear search", "Bubble sort", "Jump search"],
+    answer: "C",
+    section: "Computer Science"
+  },
+  {
+    question: "Which protocol is used to access web pages?",
+    options: ["SMTP", "FTP", "HTTP", "SNMP"],
+    answer: "C",
+    section: "Computer Science"
+  },
+  {
+    question: "Which memory is volatile?",
+    options: ["ROM", "RAM", "Hard Disk", "SSD"],
+    answer: "B",
+    section: "Computer Science"
+  },
+  {
+    question: "The OSI model has how many layers?",
+    options: ["5", "6", "7", "4"],
+    answer: "C",
+    section: "Computer Science"
+  },
+  {
+    question: "What is the result of 2**3 in Python?",
+    options: ["6", "8", "9", "5"],
+    answer: "B",
+    section: "Computer Science"
+  },
+  {
+    question: "HTML is used for:",
+    options: ["Data storage", "Webpage design", "Animation", "Coding logic"],
+    answer: "B",
+    section: "Computer Science"
+  },
+  {
+    question: "C was developed by:",
+    options: ["Dennis Ritchie", "James Gosling", "Charles Babbage", "Bill Gates"],
+    answer: "A",
+    section: "Computer Science"
+  },
+  {
+    question: "CSS is used for:",
+    options: ["Scripting", "Styling web pages", "Debugging", "Database"],
+    answer: "B",
+    section: "Computer Science"
+  },
+
+  // Logical Reasoning (10 Questions)
+  {
+    question: "What comes next: 3, 6, 12, 24, ?",
+    options: ["36", "48", "60", "72"],
+    answer: "B",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "Odd one out: Circle, Triangle, Rectangle, Sphere",
+    options: ["Circle", "Triangle", "Rectangle", "Sphere"],
+    answer: "D",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "A is the son of B. B is the father of C. How is A related to C?",
+    options: ["Brother", "Sister", "Cousin", "Uncle"],
+    answer: "D",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "Find the next in series: 2, 3, 5, 7, 11, ?",
+    options: ["13", "14", "15", "17"],
+    answer: "A",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "Which word doesn’t belong: Apple, Banana, Mango, Car",
+    options: ["Apple", "Banana", "Mango", "Car"],
+    answer: "D",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "If 9 + 1 = 810, then 8 + 2 = ?",
+    options: ["810", "610", "82", "410"],
+    answer: "D",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "Which number is missing: 81, 27, 9, 3, ?",
+    options: ["1", "0", "2", "4"],
+    answer: "A",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "If TODAY is coded as UPEBZ, how is NIGHT coded?",
+    options: ["OJHIU", "MJHIU", "MJGHS", "MJHIU"],
+    answer: "B",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "If 1 = A, 2 = B, ..., 26 = Z, what is the sum of the letters in “CAB”?",
+    options: ["6", "7", "9", "8"],
+    answer: "A",
+    section: "Logical Reasoning"
+  },
+  {
+    question: "Complete the analogy: Dog : Bark :: Cat : ?",
+    options: ["Roar", "Meow", "Growl", "Chirp"],
+    answer: "B",
+    section: "Logical Reasoning"
+  },
+
+  // English (10 Questions)
+  {
+    question: "Choose the correct synonym for “Happy”:",
+    options: ["Sad", "Joyful", "Angry", "Dull"],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "Choose the antonym for “Victory”:",
+    options: ["Triumph", "Defeat", "Conquest", "Success"],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "Fill in the blank: The sun ___ in the east.",
+    options: ["rise", "rises", "rose", "risen"],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "Choose the correct spelling:",
+    options: ["Neccessary", "Necessary", "Neccesary", "Necesary"],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "What is the noun in the sentence: \"She has great strength.\"",
+    options: ["She", "has", "great", "strength"],
+    answer: "D",
+    section: "English"
+  },
+  {
+    question: "Choose the correct tense: They have been waiting for hours.",
+    options: ["Past Perfect", "Present Perfect Continuous", "Present Continuous", "Future Perfect"],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "Identify the adjective: \"He is an honest man.\"",
+    options: ["He", "honest", "is", "man"],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "Identify the passive voice: \"He completed the work.\"",
+    options: [
+      "The work is completed",
+      "The work was completed by him",
+      "The work will be completed",
+      "He had completed the work"
+    ],
+    answer: "B",
+    section: "English"
+  },
+  {
+    question: "Fill in the blank: The train arrived ___ time.",
+    options: ["in", "on", "at", "for"],
+    answer: "C",
+    section: "English"
+  },
+  {
+    question: "Which of these is a conjunction?",
+    options: ["And", "Fast", "Very", "Again"],
+    answer: "A",
+    section: "English"
+  }
+];
+
+    const SECTIONS = {
+      Mathematics: { start: 1, end: 15, negative: false },
+      "Computer Science": { start: 16, end: 30, negative: true },
+      "Logical Reasoning": { start: 31, end: 40, negative: false },
+      English: { start: 41, end: 50, negative: false }
+    };
+
+    function CBTExamApp() {
+      const [responses, setResponses] = useState({});
+      const [currentQ, setCurrentQ] = useState(0);
+      const [submitted, setSubmitted] = useState(false);
+      const [started, setStarted] = useState(false);
+
+      // 90 minutes = 5400 seconds
+      const EXAM_DURATION = 90 * 60;
+      const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
+
+      useEffect(() => {
+        if (!started || submitted) return;
+        if (timeLeft <= 0) {
+          setSubmitted(true);
+          return;
+        }
+        const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
+        return () => clearInterval(timer);
+      }, [timeLeft, submitted, started]);
+
+      const formatTime = (secs) => {
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = (secs % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+      };
+
+      const handleOptionChange = (qIndex, value) => {
+        setResponses({ ...responses, [qIndex]: value });
+      };
+
+      const handlePrev = () => {
+        if (currentQ > 0) setCurrentQ(currentQ - 1);
+      };
+
+      const handleNext = () => {
+        if (currentQ < questions.length - 1) setCurrentQ(currentQ + 1);
+      };
+
+      const handleStart = () => {
+        setStarted(true);
+        setTimeLeft(EXAM_DURATION);
+        setSubmitted(false);
+        setResponses({});
+        setCurrentQ(0);
+      };
+
+      const calculateScores = () => {
+        const breakdown = {};
+        let total = 0;
+        Object.entries(SECTIONS).forEach(([section, config]) => {
+          let score = 0;
+          for (let i = config.start - 1; i < config.end; i++) {
+            const given = responses[i];
+            const correct = questions[i]?.answer;
+            if (given) {
+              if (given === correct) score += 1;
+              else if (config.negative) score -= 0.25;
+            }
+          }
+          breakdown[section] = score;
+          total += score;
+        });
+        return { breakdown, total };
+      };
+
+      const { breakdown, total } = calculateScores();
+
+      if (!started) {
+        return (
+          <div style={{
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            height: "100vh", background: "#f1f5f9"
+          }}>
+            <h1>Welcome to TUEE MCA 2025 CBT Exam</h1>
+            <p>Duration: 90 minutes</p>
+            <button
+              className="submit-btn"
+              style={{ fontSize: "22px", padding: "16px 40px", background: "#16a34a" }}
+              onClick={handleStart}
+            >
+              Start Exam
+            </button>
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <div className="timer">
+            Time Left: {formatTime(timeLeft)}
+          </div>
+          <div className="app">
+            <div className="sidebar">
+              <h2>Question Nav</h2>
+              <div className="question-nav">
+                {questions.map((q, idx) => (
+                  <button
+                    key={idx}
+                    className={`question-btn ${currentQ === idx ? "active" : ""}`}
+                    onClick={() => setCurrentQ(idx)}
+                    style={{
+                      backgroundColor: responses[idx]
+                        ? (currentQ === idx ? "#22c55e" : "#0ea5e9")
+                        : (currentQ === idx ? "#22c55e" : "#64748b")
+                    }}
+                    title={q.section}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="main">
+              {!submitted ? (
+                <div className="question-container">
+                  <h3>Q{currentQ + 1}. {questions[currentQ].question}</h3>
+                  <div className="options">
+                    {questions[currentQ].options.map((opt, i) => {
+                      const optionId = `q${currentQ}_opt${i}`;
+                      return (
+                        <label key={i} htmlFor={optionId}>
+                          <input
+                            type="radio"
+                            id={optionId}
+                            name={`q${currentQ}`}
+                            value={String.fromCharCode(65 + i)}
+                            checked={responses[currentQ] === String.fromCharCode(65 + i)}
+                            onChange={(e) => handleOptionChange(currentQ, e.target.value)}
+                          /> {opt}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <div className="nav-btns">
+                    <button className="submit-btn" onClick={handlePrev} disabled={currentQ === 0}>Previous</button>
+                    <button className="submit-btn" onClick={handleNext} disabled={currentQ === questions.length - 1}>Next</button>
+                    <button
+                      className="submit-btn"
+                      onClick={() => setSubmitted(true)}
+                      style={{ backgroundColor: "#16a34a" }}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="result">
+                  <h2>Result</h2>
+                  {Object.entries(breakdown).map(([sec, sc]) => (
+                    <p key={sec}><strong>{sec}:</strong> {sc.toFixed(2)}</p>
+                  ))}
+                  <p><strong>Total Score:</strong> {total.toFixed(2)}</p>
+                  {timeLeft === 0 && <p style={{color: "red"}}>Time's up! Your exam was auto-submitted.</p>}
+                  <button
+                    className="submit-btn"
+                    style={{ marginTop: "20px", background: "#2563eb" }}
+                    onClick={handleStart}
+                  >
+                    Restart Exam
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<CBTExamApp />, document.getElementById("root"));
+  </script>
+</body>
+</html>
